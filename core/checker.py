@@ -1,4 +1,4 @@
-﻿import time
+import time
 import pygetwindow as gw
 
 class Checker:

@@ -10,6 +10,8 @@ from core.checker import Checker
 from core.skills.music import MusicSkill
 from core.skills.video import VideoSkill
 from core.skills.volume import VolumeSkill
+from core.tool_registry import ToolRegistry, ToolExecutionError
+from core.tools import create_computer_use_tools, create_skills_tools, create_communication_tools
 
 # Статусы выполнения
 STATUS_PLANNED = "planned"
@@ -55,8 +57,62 @@ class Executor:
         self.music = MusicSkill()
         self.video = VideoSkill()
         self.volume = VolumeSkill()
+        
+        # Initialize Tool Registry with all tools
+        self.registry = ToolRegistry()
+        self._register_all_tools()
+        
         self._current_status = STATUS_PLANNED
         self._step_results = []
+    
+    def _register_all_tools(self):
+        """Register all available tools in the registry."""
+        # Register computer use tools
+        computer_tools = create_computer_use_tools(log_fn=self.log_fn)
+        for tool in computer_tools.values():
+            self.registry.register(tool)
+        
+        # Register skills tools (pass vision and mouse for music_search)
+        skills_tools = create_skills_tools(
+            log_fn=self.log_fn,
+            vision=self.vision,
+            mouse=self.mouse
+        )
+        for tool in skills_tools.values():
+            self.registry.register(tool)
+        
+        # Register communication tools
+        comm_tools = create_communication_tools(
+            ai=self.ai,
+            vision=self.vision,
+            log_fn=self.log_fn
+        )
+        for tool in comm_tools.values():
+            self.registry.register(tool)
+    
+    def _execute_tool(self, step: Dict[str, Any]) -> str:
+        """Execute a step using the Tool Registry.
+        
+        Args:
+            step: Dictionary containing action and arguments
+            
+        Returns:
+            Execution result message
+        """
+        action = step.get("action", "unknown")
+        
+        try:
+            # Extract arguments (everything except 'action')
+            args = {k: v for k, v in step.items() if k != "action"}
+            
+            # Execute through registry
+            result = self.registry.execute(action, args if args else None)
+            return result if isinstance(result, str) else str(result)
+            
+        except ToolExecutionError as e:
+            return f"ошибка инструмента {action}: {e.message}"
+        except Exception as e:
+            return f"ошибка шага: {e}"
 
     def _log_step(self, step_num: int, action: str, status: str, result: str = ""):
         """Логирует результат выполнения шага."""
@@ -234,96 +290,15 @@ class Executor:
         return "ответить"
 
     def _exec_one(self, step: Dict[str, Any]) -> str:
-        action = step.get("action")
-        try:
-            if action == "url":
-                before = self.checker.titles()
-                webbrowser.open(step.get("value", ""))
-                win = self.checker.wait_change(before, timeout=8)
-                if win:
-                    return f"открыл {step.get('value')}"
-                return f"открыл {step.get('value')} (окно не изменилось — проверь)"
-
-            if action == "run":
-                value = step.get("value", "").strip()
-                before = self.checker.titles()
-                subprocess.Popen(value, shell=True)
-                win = self.checker.wait_change(before, timeout=6)
-                if not win:
-                    time.sleep(2)
-                    win = self.checker.wait_change(before, timeout=4)
-                if win:
-                    return f"запустил {value} (окно: {win})"
-                return f"запустил {value}, но окно не найдено"
-
-            if action == "press":
-                self.keyboard.press(step.get("value", ""))
-                return f"нажал {step.get('value')}"
-
-            if action == "type":
-                window = step.get("window")
-                if window and not self._activate_with_retry(window):
-                    return f"окно '{window}' не найдено"
-                self.keyboard.type_text(step.get("text", ""))
-                return "ввёл текст"
-
-            if action == "type_think":
-                text = self.ai.ask_raw(
-                    f"Задание: {step.get('task', '')}\n"
-                    "Верни ТОЛЬКО готовый текст, без вступлений и подписей.",
-                    timeout=60
-                )
-                if self.log_fn:
-                    self.log_fn(f"Сочинил: {text}")
-                window = step.get("window")
-                if window and not self._activate_with_retry(window):
-                    return f"окно '{window}' не найдено"
-                self.keyboard.type_text(text)
-                return f"сочинил и ввёл: {text[:60]}..."
-
-            if action == "click_see":
-                target = step.get("target", "")
-                coords = self.vision.find(target)
-                if not coords:
-                    time.sleep(1.0)
-                    coords = self.vision.find(target)
-                if not coords:
-                    return f"не вижу: {target}"
-                self.mouse.click(*coords)
-                return f"кликнул {target}"
-
-            if action == "scroll":
-                try:
-                    n = int(step.get("value", 3))
-                except (ValueError, TypeError):
-                    n = 3
-                self.mouse.scroll(n)
-                return "прокрутил"
-
-            if action == "music_play":
-                return self.music.open_app()
-
-            if action == "music_search":
-                return self.music.play_search(step.get("value", ""), self.vision, self.mouse, self.log_fn)
-
-            if action == "youtube":
-                return self.video.youtube(step.get("value", ""), self.log_fn)
-
-            if action == "kinopoisk":
-                return self.video.kinopoisk(step.get("value", ""), self.log_fn)
-
-            if action == "media":
-                key = step.get("value", "playpause")
-                if self.music.media(key):
-                    return f"медиа-команда: {key}"
-                return f"не знаю медиа-команду {key}"
-
-            if action == "volume":
-                return self.volume.set_level(step.get("value"))
-
-            return "не понял шаг"
-        except Exception as e:
-            return f"ошибка шага: {e}"
+        """Execute a single step using the Tool Registry.
+        
+        Args:
+            step: Dictionary containing action and arguments
+            
+        Returns:
+            Execution result message
+        """
+        return self._execute_tool(step)
 
     def _activate_with_retry(self, window: str) -> bool:
         if self.wm.activate(window):

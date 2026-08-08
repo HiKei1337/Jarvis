@@ -5,39 +5,60 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-*.so
-.coverage
-coverage/
-htmlcov/
-
-# Virtual environments
-.venv/
-venv/
 env/
-ENV/
-
-# Build artifacts
-build/
-dist/
-*.egg
-*.egg-info/
+venv/
+.venv/
+.ENV
+.python-version
 pip-log.txt
 pip-delete-this-directory.txt
-
-# Testing
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+.MF
+tags
+TAGS
+maint/coverage/
+htmlcov/
 .pytest_cache/
 .mypy_cache/
 .hypothesis/
 
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Build
+build/
+dist/
+*.egg-info/
+
 # Logs
 *.log
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Coverage
+coverage/
+htmlcov/
+.coverage
 ```

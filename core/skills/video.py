@@ -1,4 +1,4 @@
-﻿import json
+import json
 import random
 import time
 from urllib.parse import quote

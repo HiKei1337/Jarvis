@@ -1,4 +1,4 @@
-﻿from core.agent import Agent, STOP_WORDS
+from core.agent import Agent, STOP_WORDS
 from voice.speaker import Speaker
 from voice.listener import Listener
 
