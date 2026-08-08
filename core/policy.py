@@ -1,4 +1,4 @@
-﻿import threading
+import threading
 import time
 
 FORBIDDEN = ("format ", "rd /s", "del /s", "remove-item", "shutdown",
@@ -24,6 +24,11 @@ ACTION_RISK = {
     "click": 3,
     "click_see": 3,
     "scroll": 3,
+    "mouse_move": 2,
+    "mouse_click": 2,
+    "keyboard_type": 2,
+    "keyboard_press": 2,
+    "launch_app": 4,
 }
 
 def risk_for(step):
@@ -46,7 +51,8 @@ class PolicyEngine:
 
     SANDBOX_OK = {"chat", "url", "type", "type_think", "click_see", "scroll",
                   "music_play", "music_search", "media", "youtube", "kinopoisk",
-                  "volume"}
+                  "volume", "press", "mouse_move", "mouse_click", "keyboard_type",
+                  "keyboard_press"}
 
     def evaluate(self, step):
         a = step.get("action")

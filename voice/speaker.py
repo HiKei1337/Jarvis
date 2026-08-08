@@ -1,4 +1,4 @@
-﻿import torch
+import torch
 import sounddevice as sd
 
 class Speaker:
