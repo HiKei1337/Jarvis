@@ -1,4 +1,4 @@
-﻿from llm.ollama_client import OllamaClient
+from llm.ollama_client import OllamaClient
 from memory.memory import Memory
 from core.planner import Planner
 from core.executor import Executor
