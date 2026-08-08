@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local AI / model files
+*.gguf
+*.bin
+*.safetensors
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

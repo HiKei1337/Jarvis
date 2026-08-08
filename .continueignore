@@ -1,0 +1,12 @@
+browser-profile/
+__pycache__/
+logs/
+screenshots/
+models/
+.continue/
+
+*.db
+*.baj
+index.txt
+messages.json
+SiteList-*.json
