@@ -16,8 +16,10 @@ venv/
 env/
 ENV/
 
-# Build artifacts
+# Build artifacts (PyInstaller generated, but keep our build scripts)
 build/
+!build/build_exe.py
+!build/jarvis.spec
 dist/
 *.egg
 *.egg-info/
