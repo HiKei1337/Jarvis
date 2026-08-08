@@ -4,22 +4,47 @@ block_cipher = None
 
 # Define the project root (parent of build directory)
 import os
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import sys
+
+# In spec file execution, we need to determine project root differently
+# The spec file is in build/, project root is its parent
+spec_file_path = globals().get('_specfile', '')
+if spec_file_path:
+    spec_file_dir = os.path.dirname(spec_file_path)
+else:
+    # Fallback: assume spec file is in build/ subdirectory of project root
+    spec_file_dir = os.path.join(os.getcwd(), 'build')
+    
+project_root = os.path.dirname(spec_file_dir)
+
+# main_gui.py is in project root, not in build/
+main_gui_path = os.path.join(project_root, 'main_gui.py')
+
+# Data directories are relative to project_root
+config_dir = os.path.join(project_root, 'config')
+gui_dir = os.path.join(project_root, 'gui')
+core_dir = os.path.join(project_root, 'core')
+automation_dir = os.path.join(project_root, 'automation')
+llm_dir = os.path.join(project_root, 'llm')
+memory_dir = os.path.join(project_root, 'memory')
+vision_dir = os.path.join(project_root, 'vision')
+voice_dir = os.path.join(project_root, 'voice')
+plugins_dir = os.path.join(project_root, 'plugins')
 
 a = Analysis(
-    ['main_gui.py'],
+    [main_gui_path],
     pathex=[project_root],
     binaries=[],
     datas=[
-        ('config', 'config'),
-        ('gui', 'gui'),
-        ('core', 'core'),
-        ('automation', 'automation'),
-        ('llm', 'llm'),
-        ('memory', 'memory'),
-        ('vision', 'vision'),
-        ('voice', 'voice'),
-        ('plugins', 'plugins'),
+        (config_dir, 'config'),
+        (gui_dir, 'gui'),
+        (core_dir, 'core'),
+        (automation_dir, 'automation'),
+        (llm_dir, 'llm'),
+        (memory_dir, 'memory'),
+        (vision_dir, 'vision'),
+        (voice_dir, 'voice'),
+        (plugins_dir, 'plugins'),
     ],
     hiddenimports=[
         # PySide6 / customtkinter dependencies
