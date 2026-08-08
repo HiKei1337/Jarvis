@@ -1,0 +1,50 @@
+# JARVIS Configuration
+
+llm:
+  provider: "ollama"
+  model: "gpt-oss:20b"
+  fast_model: "qwen2.5-coder:7b"
+  vision_model: "qwen3-vl:8b"
+  temperature: 0.7
+  timeout: 180
+
+agent:
+  max_steps: 20
+  max_retries: 3
+  step_timeout: 30
+
+vision:
+  enabled: true
+  coordinate_system: "normalized"  # normalized (0-1000) or pixels
+
+voice:
+  stt_enabled: true
+  tts_enabled: true
+  wake_word_enabled: true
+  wake_word: "джарвис"
+  speaker: "eugene"
+  depth: 1.0
+
+browser:
+  browser_path: ""  # empty = auto-detect
+  cdp_port: 9222
+
+memory:
+  database_path: "jarvis.db"
+  max_context_messages: 8
+
+security:
+  require_confirmation: true
+  trusted_mode: false
+  sandbox_mode: false
+
+gui:
+  enabled: true
+  theme: "dark"
+  width: 800
+  height: 560
+
+logging:
+  enabled: true
+  screenshot_on_risk: true
+  log_dir: "logs"

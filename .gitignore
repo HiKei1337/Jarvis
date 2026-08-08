@@ -1,45 +1,43 @@
+```
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+coverage/
+htmlcov/
 
-# Virtual environment
+# Virtual environments
 .venv/
 venv/
 env/
 ENV/
 
-# Environment / secrets
-.env
-.env.*
-!.env.example
-
-# IDE
-.vscode/
-.idea/
-
-# Build / distribution
+# Build artifacts
 build/
 dist/
+*.egg
 *.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
 
 # Logs
 *.log
 
-# OS
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-Desktop.ini
-
-# Temporary files
-*.tmp
-*.temp
-
-# Local AI / model files
-*.gguf
-*.bin
-*.safetensors
-
-# Python cache
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+```
